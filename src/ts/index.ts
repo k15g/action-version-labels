@@ -11,10 +11,11 @@ var channel = process.env['default_channel'] || 'edge'
 var label = process.env['default_label'] || 'dev'
 var version = process.env['default_version'] || `dev-${strftime('%Y%m%d%H%M%Sz', timestamp)}`
 
+// Handle when a tag is referenced
 if (GITHUB_REF.startsWith('refs/tags/v')) {
     channel = GITHUB_REF.replace('refs/tags/', '').replace(/\.\d+/g, '')
     version = GITHUB_REF.replace('refs/tags/v', '')
-    label = `v${version}`
+    label = GITHUB_REF.replace('refs/tags/', '')
 }
 
 // Publish identifiers

@@ -24,13 +24,7 @@ jobs:
       run: make build
 
     - name: Detect channel and version
-      uses: actions/github-script@v4
-      with:
-        script: |
-          var channel = context.ref.startsWith('refs/tags/v') ? context.ref.replace('refs/tags/', '').replace(/\.\d+/g, '') : 'edge';
-          var version = context.ref.startsWith('refs/tags/v') ? context.ref.replace('refs/tags/v', '') : 'dev';
-          core.exportVariable('CHANNEL', channel);
-          core.exportVariable('VERSION', version);
+      uses: ./dist
 
     - name: Package distribution
       run: cd dist && tar -czf ../${{ github.event.repository.name }}-${{ env.VERSION }}.tar.gz *
