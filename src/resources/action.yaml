@@ -1,0 +1,22 @@
+name: Versioning
+description: ...
+author: Erlend Klakegg Bergheim
+
+inputs:
+  default_channel:
+    description: Default channel identifier
+    required: false
+  default_label:
+    description: Default label
+    required: false
+  default_version:
+    description: Default version identifier
+    required: false
+
+branding:
+  color: green
+  icon: anchor
+
+runs:
+  using: node12
+  main: index.js
