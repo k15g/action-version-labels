@@ -10,7 +10,7 @@ var version = process.env['default_version'] || `dev-${strftime('%Y%m%d%H%M%Sz',
 if (GITHUB_REF.startsWith('refs/tags/v')) {
     channel = GITHUB_REF.replace('refs/tags/', '').replace(/\.\d+/g, '');
     version = GITHUB_REF.replace('refs/tags/v', '');
-    label = `v${version}`;
+    label = GITHUB_REF.replace('refs/tags/', '');
 }
 core.exportVariable('CHANNEL', channel);
 core.exportVariable('LABEL', label);
