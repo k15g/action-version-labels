@@ -2,23 +2,46 @@ import * as core from '@actions/core'
 import * as strftime from 'strftime'
 
 const { GITHUB_REF } = process.env
+const match = process.env['INPUT_MATCH'] || '^refs/tags/v'
+const prefixes = core.getInput('prefix') != '' ? [core.getInput('prefix').toUpperCase()] : []
 
 // Get timestamp
 var timestamp = new Date(new Date().getTime() + (new Date().getTimezoneOffset() * 60 * 1000))
 
-// Set default
-var channel = process.env['default_channel'] || 'edge'
-var label = process.env['default_label'] || 'dev'
-var version = process.env['default_version'] || `dev-${strftime('%Y%m%d%H%M%Sz', timestamp)}`
-
-// Handle when a tag is referenced
-if (GITHUB_REF.startsWith('refs/tags/v')) {
-    channel = GITHUB_REF.replace('refs/tags/', '').replace(/\.\d+/g, '')
-    version = GITHUB_REF.replace('refs/tags/v', '')
-    label = GITHUB_REF.replace('refs/tags/', '')
+// Prepare values
+var values = {
+    timestamp: strftime(process.env['INPUT_TIMESTAMP_PATTERN'] || '%Y%m%d%H%M%Sz', timestamp)
 }
 
-// Publish identifiers
-core.exportVariable('CHANNEL', channel)
-core.exportVariable('LABEL', label)
-core.exportVariable('VERSION', version)
+// Trigger
+handle('CHANNEL', 'edge', '^refs/tags/v([0-9]+)\..+$', 'v$1')
+handle('LABEL', 'dev', '^refs/tags/(.+)$', '$1')
+handle('VERSION', 'dev-%timestamp%', '^refs/tags/v(.+)$', '$1')
+
+
+function handle(label: string, default_value: string, default_regex: string, default_replace: string) {
+    // Set default
+    var value = process.env[`INPUT_${label}_DEFAULT`] || default_value
+    var regex = process.env[`INPUT_${label}_REGEX`] || default_regex
+    var replace = process.env[`INPUT_${label}_REPLACE`] || default_replace
+
+    // Potentially perform replace
+    if (GITHUB_REF.match(new RegExp(match)))
+        value = GITHUB_REF.replace(new RegExp(regex), replace)
+
+    // Replace 
+    value = value_replaces(value)
+
+    // Publish identifier
+    core.exportVariable([...prefixes, label].join('_'), value)
+
+    return value
+}
+
+function value_replaces(value: string): string {
+    Object.entries(values).forEach(entry => {
+        value = value.replace(`%${entry[0]}%`, entry[1])
+    });
+
+    return value
+}
