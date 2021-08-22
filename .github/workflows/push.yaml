@@ -28,6 +28,9 @@ jobs:
       with:
         prefix: project
 
+    - name: Copy readme
+      run: cat README.md | sed "s:@edge:@${{ env.PROJECT_CHANNEL }}:g" > dist/README.md
+
     - name: Package distribution
       run: cd dist && tar -czf ../${{ github.event.repository.name }}-${{ env.PROJECT_VERSION }}.tar.gz *
 
