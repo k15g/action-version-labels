@@ -1,5 +1,5 @@
 {
-  "name": "action-versioning",
+  "name": "action-version-labels",
   "devDependencies": {
     "@types/node": "^16.7.1",
     "@types/strftime": "^0.9.3",

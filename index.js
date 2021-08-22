@@ -3,15 +3,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = require("@actions/core");
 const strftime = require("strftime");
 const { GITHUB_REF } = process.env;
+const match = process.env['INPUT_MATCH'] || '^refs/tags/v';
+const prefixes = core.getInput('prefix') != '' ? [core.getInput('prefix').toUpperCase()] : [];
 var timestamp = new Date(new Date().getTime() + (new Date().getTimezoneOffset() * 60 * 1000));
-var channel = process.env['default_channel'] || 'edge';
-var label = process.env['default_label'] || 'dev';
-var version = process.env['default_version'] || `dev-${strftime('%Y%m%d%H%M%Sz', timestamp)}`;
-if (GITHUB_REF.startsWith('refs/tags/v')) {
-    channel = GITHUB_REF.replace('refs/tags/', '').replace(/\.\d+/g, '');
-    version = GITHUB_REF.replace('refs/tags/v', '');
-    label = GITHUB_REF.replace('refs/tags/', '');
+var values = {
+    timestamp: strftime(process.env['INPUT_TIMESTAMP_PATTERN'] || '%Y%m%d%H%M%Sz', timestamp)
+};
+handle('CHANNEL', 'edge', '^refs/tags/v([0-9]+)\..+$', 'v$1');
+handle('LABEL', 'dev', '^refs/tags/(.+)$', '$1');
+handle('VERSION', 'dev-%timestamp%', '^refs/tags/v(.+)$', '$1');
+function handle(label, default_value, default_regex, default_replace) {
+    var value = process.env[`INPUT_${label}_DEFAULT`] || default_value;
+    var regex = process.env[`INPUT_${label}_REGEX`] || default_regex;
+    var replace = process.env[`INPUT_${label}_REPLACE`] || default_replace;
+    if (GITHUB_REF.match(new RegExp(match)))
+        value = GITHUB_REF.replace(new RegExp(regex), replace);
+    value = value_replaces(value);
+    core.exportVariable([...prefixes, label].join('_'), value);
+    return value;
 }
-core.exportVariable('CHANNEL', channel);
-core.exportVariable('LABEL', label);
-core.exportVariable('VERSION', version);
+function value_replaces(value) {
+    Object.entries(values).forEach(entry => {
+        value = value.replace(`%${entry[0]}%`, entry[1]);
+    });
+    return value;
+}
