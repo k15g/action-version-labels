@@ -23,7 +23,7 @@ jobs:
     - name: Build
       run: make build
 
-    - name: Version labels
+    - name: Prepare version labels
       uses: ./dist
       with:
         prefix: project
@@ -57,3 +57,5 @@ jobs:
         publish_dir: ./dist
         publish_branch: ${{ env.PROJECT_CHANNEL }}
         enable_jekyll: true
+        user_name: ${{ secrets.BOT_USERNAME }}
+        user_email: ${{ secrets.BOT_EMAIL }}
