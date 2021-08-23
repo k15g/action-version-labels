@@ -1,0 +1,53 @@
+name: Versioning
+description: ...
+author: Erlend Klakegg Bergheim
+
+inputs:
+  match:
+    description: Reference matcher
+    required: false
+  prefix:
+    description: Variable prefix
+    required: false
+
+  timestamp_pattern:
+    description: Timestamp pattern
+    required: false
+
+  channel_default:
+    description: Default channel identifier
+    required: false
+  channel_regex:
+    description: Channel regex
+    required: false
+  channel_replace:
+    description: Channel replace
+    required: false
+
+  label_default:
+    description: Default label
+    required: false
+  label_regex:
+    description: Label regex
+    required: false
+  label_replace:
+    description: Label replace
+    required: false
+
+  version_default:
+    description: Default version identifier
+    required: false
+  version_regex:
+    description: Version regex
+    required: false
+  version_replace:
+    description: Version replace
+    required: false
+
+branding:
+  color: green
+  icon: anchor
+
+runs:
+  using: node12
+  main: index.js
