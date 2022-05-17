@@ -3,8 +3,6 @@ name: Build action
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
   release:
     types: [ released ]
 
@@ -19,6 +17,9 @@ jobs:
 
     - name: Fetch npm dependencies
       run: npm install
+
+    - name: Test
+      run: make test
 
     - name: Build
       run: make build
