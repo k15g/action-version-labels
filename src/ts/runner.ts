@@ -30,7 +30,7 @@ export function run(env: strMap): strMap {
     }
 
     // Detect prefix
-    var prefixes = 'INPUT_PREFIX' in env ? [env['INPUT_PREFIX'].toUpperCase()] : []
+    var prefixes = ('INPUT_PREFIX' in env && env['INPUT_PREFIX'] != '') ? [env['INPUT_PREFIX'].toUpperCase()] : []
 
     // Prepare result to return
     var result: strMap = {}
