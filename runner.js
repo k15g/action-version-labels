@@ -19,7 +19,7 @@ function run(env) {
     var values = {
         timestamp: strftime(env['INPUT_TIMESTAMP_PATTERN'] || '%Y%m%d%H%M%Sz', timestamp)
     };
-    var prefixes = 'INPUT_PREFIX' in env ? [env['INPUT_PREFIX'].toUpperCase()] : [];
+    var prefixes = ('INPUT_PREFIX' in env && env['INPUT_PREFIX'] != '') ? [env['INPUT_PREFIX'].toUpperCase()] : [];
     var result = {};
     specs_1.specs.forEach(({ label, value, regex, replace }) => {
         value = env[`INPUT_${label}_DEFAULT`] || value;
